@@ -1,26 +1,43 @@
 'use strict';
 
 var expect = require ('chai').expect;
-var numFormatter = require('../index');
+var filemakerTests = require('../index');
 
-describe('#numFormatter', function() {
-	it('should convert single digits', function() {
-		var result = numFormatter(1);
-		expect(result).to.equal('1');
+describe('#filemakerTests', function() {	
+	it('Set/Get Headers', function() {
+		var filemaker = filemakerTests();
+		var headers = {"Content-Type" : "application/json"};
+		filemaker.setHeaders(headers);
+		var result = filemaker.getHeaders();
+		expect(result).to.deep.equal(headers);
 	});
-	
-	it('should convert double digits', function() {
-    var result = numFormatter(12);
-    expect(result).to.equal('12');
+	it('Set/Get Body', function() {
+		var filemaker = filemakerTests();
+		var body = {"user" : "Username", "password" : "Password", "layout": "Layout"};
+		filemaker.setBody(body);
+		var result = filemaker.getBody();
+		expect(result).to.deep.equal(body);
 	});
-	
-	it('should convert triple digits', function() {
-    var result = numFormatter(123);
-    expect(result).to.equal('123');
-	});
-
-	it('should convert 4 digits', function() {
-    var result = numFormatter(1234);
-    expect(result).to.equal('1,234');
+	it('Authenticate', function(done) {
+		var filemaker = filemakerTests();
+		filemaker.authenticate('https', '127.0.0.1', 'contacts', function(error, result) {
+			if(!error) {
+				if(result.errorMessage === 'Method Not Allowed') {
+					done(result.errorMessage);
+				} 
+				else if(result.errorMessage === 'Unsupported Media Type') {
+					done(result.errorMessage);
+				} 
+				else if (result.errorCode !== '0') {
+					done(result.errorMessage);
+				}
+				else {
+					done();
+				}				
+			} else {
+				done(error);
+			}
+		})
+		
 	});
 });
