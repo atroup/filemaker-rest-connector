@@ -1,5 +1,5 @@
 {
-  "name": "filemaker-rest-connector",
+  "name": "filemaker-rest-connector2",
   "version": "0.0.1",
   "description": "NPM Package that will make requests to the FileMaker REST API",
   "main": "index.js",
