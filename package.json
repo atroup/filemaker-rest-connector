@@ -1,0 +1,32 @@
+{
+  "name": "filemaker-rest-connector",
+  "version": "0.0.1",
+  "description": "NPM Package that will make requests to the FileMaker REST API",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevenwhitespacesystems/filemaker-rest-connector.git"
+  },
+  "keywords": [
+    "FileMaker",
+    "Server",
+    "REST",
+    "API"
+  ],
+  "author": "Steven McGill <steven@whitespacesystems.co.uk> (http://whitespacesystems.co.uk)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stevenwhitespacesystems/filemaker-rest-connector/issues"
+  },
+  "homepage": "https://github.com/stevenwhitespacesystems/filemaker-rest-connector#readme",
+  "engines": {
+    "node": ">=7.8.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
