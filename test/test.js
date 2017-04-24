@@ -63,6 +63,14 @@ describe('#FILEMAKER TESTS', function() {
 			var result = filemaker.getToken();
 			expect(result).to.deep.equal(token);
 		});
+		
+		it('Set/Get RecordId', function() {
+			var filemaker = filemakerTests();
+			var recordId = '100';
+			filemaker.setRecordId(recordId);
+			var result = filemaker.getRecordId();
+			expect(result).to.deep.equal(recordId);
+		});
 	});
 	
 	describe('#AUTHENTICATION', function (){
@@ -137,129 +145,186 @@ describe('#FILEMAKER TESTS', function() {
 			
 		});
 		
-		it('Get Records', function(done) {
-			filemaker.getRecords(layout, null, function(error, result) {
-				if(result.errorMessage === 'Missing FM-Data-token.') {
-					done(result.errorMessage);
-				} else if (result.errorCode !== '0') {
-					done(result.errorMessage);
-				} else {
-					done();
+		describe('#CREATE/EDIT/DELETE', function(){
+			
+			var recordId;
+			
+			it('Create Record (John Smith)', function(done) {
+				var params = {
+					"Title" : "Mr",
+					"First" : "John",
+					"Last" : "Smith"
 				}
-			});
-		});
-		
-		it('Get Records (Offset)', function(done) {
-			var params = {
-				"offset" : 2
-			};
-			filemaker.getRecords(layout, params, function(error, result) {
-				if(result.errorMessage === 'Missing FM-Data-token.') {
-					done(result.errorMessage);
-				} else if (result.errorCode !== '0') {
-					done(result.errorMessage);
-				} else {
-					done();
-				}
-			});
-		});
-		
-		it('Get Records (Range)', function(done) {
-			var params = {
-				"offset" : 10,
-				"range" : 10
-			};
-			filemaker.getRecords(layout, params, function(error, result) {
-				if(result.errorMessage === 'Missing FM-Data-token.') {
-					done(result.errorMessage);
-				} else if (result.errorCode !== '0') {
-					done(result.errorMessage);
-				} else {
-					done();
-				}
-			});
-		});
-		
-		it('Get Records (Sort)', function(done) {
-			var params = {
-				"offset" : 10,
-				"sort" : [
-					{
-						"fieldName" : "Title",
-						"sortOrder" : "ascend"
-					},
-					{
-						"fieldName" : "Last",
-						"sortOrder" : "descend"
+				filemaker.create(layout, params, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						recordId = filemaker.getRecordId();
+						done();
 					}
-				]
-			};
-			filemaker.getRecords(layout, params, function(error, result) {
-				if(result.errorMessage === 'Missing FM-Data-token.') {
-					done(result.errorMessage);
-				} else if (result.errorCode !== '0') {
-					done(result.errorMessage);
-				} else {
-					done();
-				}
+				});
 			});
+			
+			it('Edit Record (Jane Smith)', function(done) {
+				var params = {
+					"Title" : "Mrs",
+					"First" : "Jane",
+					"Last" : "Smith"
+				}
+				filemaker.edit(layout, recordId, params, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
+			});
+			
+			it('Delete Record (John Smith)', function(done) {
+				filemaker.delete(layout, recordId, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
+			});
+			
 		});
 		
-		it('Get Records (Portal)', function(done) {
-			var params = {
-				"offset" : 10,
-				"portal" : {
-					"Portal1" : {
-						"offset" : 1,
-						"range" : 2
-					},
-					"Portal2" : {
-						"offset" : 1,
-						"range" : 2
-					}					
-				}
-			};
-			filemaker.getRecords(layout, params, function(error, result) {
-				if(result.errorMessage === 'Missing FM-Data-token.') {
-					done(result.errorMessage);
-				} else if (result.errorCode !== '0') {
-					done(result.errorMessage);
-				} else {
-					done();
-				}
+		describe('#FINDS/GETS', function(){
+			
+			it('Get Records', function(done) {
+				filemaker.getRecords(layout, null, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
 			});
-		});
-		
-		it('Get Record', function(done) {
-			filemaker.getRecord(layout, null, 2, function(error, result) {
-				if(result.errorMessage === 'Missing FM-Data-token.') {
-					done(result.errorMessage);
-				} else if (result.errorCode !== '0') {
-					done(result.errorMessage);
-				} else {
-					done();
-				}
+			
+			it('Get Records (Offset)', function(done) {
+				var params = {
+					"offset" : 2
+				};
+				filemaker.getRecords(layout, params, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
 			});
-		});
-		
-		it('Get Record (Portal)', function(done) {
-			var params = {
+			
+			it('Get Records (Range)', function(done) {
+				var params = {
+					"offset" : 10,
+					"range" : 10
+				};
+				filemaker.getRecords(layout, params, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
+			});
+			
+			it('Get Records (Sort)', function(done) {
+				var params = {
+					"offset" : 10,
+					"sort" : [
+						{
+							"fieldName" : "Title",
+							"sortOrder" : "ascend"
+						},
+						{
+							"fieldName" : "Last",
+							"sortOrder" : "descend"
+						}
+					]
+				};
+				filemaker.getRecords(layout, params, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
+			});
+			
+			it('Get Records (Portal)', function(done) {
+				var params = {
+					"offset" : 10,
 					"portal" : {
 						"Portal1" : {
+							"offset" : 1,
+							"range" : 2
+						},
+						"Portal2" : {
 							"offset" : 1,
 							"range" : 2
 						}					
 					}
 				};
-			filemaker.getRecord(layout, params, 2, function(error, result) {
-				if(result.errorMessage === 'Missing FM-Data-token.') {
-					done(result.errorMessage);
-				} else if (result.errorCode !== '0') {
-					done(result.errorMessage);
-				} else {
-					done();
-				}
+				filemaker.getRecords(layout, params, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
 			});
+			
+			it('Get Record', function(done) {
+				filemaker.getRecord(layout, null, 2, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
+			});
+			
+			it('Get Record (Portal)', function(done) {
+				var params = {
+						"portal" : {
+							"Portal1" : {
+								"offset" : 1,
+								"range" : 2
+							}					
+						}
+					};
+				filemaker.getRecord(layout, params, 2, function(error, result) {
+					if(result.errorMessage === 'Missing FM-Data-token.') {
+						done(result.errorMessage);
+					} else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					} else {
+						done();
+					}
+				});
+			});
+			
 		});
 		
 	});
@@ -279,7 +344,7 @@ describe('#FILEMAKER TESTS', function() {
 		
 		it('Find Records', function(done) {
 			var params = {
-				"query" : [{"Title" : "Mr", "omit" : "false"}],
+				"query" : [{"Video" : "Video", "omit" : "false"}],
 				"sort" : [{"fieldName" : "Last", "sortOrder" : "descend"}],
 				"offset" : "10",
 				"range" : "10",
