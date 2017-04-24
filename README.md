@@ -14,7 +14,8 @@ var filemaker = new FileMaker(
 	    "ip" : "127.0.0.1",
 	    "solution" : "contacts",
 	    "headers" : {"Content-Type" : "application/json"},
-	    "body" : {"user" : "Admin", "password" : "Admin", "layout": layout}
+	    "body" : {"user" : "Admin", "password" : "Admin", "layout": layout},
+	    "selfSignedCertificate" : false
 }
 );
 filemaker.login(function(error, result) {
@@ -54,7 +55,12 @@ Depending on the size of the project, if it is small and simple enough the refer
 
 ## Tests
 
-Describe and show how to run the tests with code examples.
+```
+cd ROOT/node_modules/filemaker-rest-connector
+npm test
+```
+
+This will run all the use test cases already built into the system. If the **Contacts.fmp12** file is configured properly on your FileMaker Server 16 server, all tests should pass.
 
 ## Contributors
 
