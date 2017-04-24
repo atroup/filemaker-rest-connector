@@ -53,6 +53,7 @@ var filemaker = (options) => {
 			// TODO: Handle oAuth
 			// TODO: Handle oAuth
 			// TODO: Handle oAuth
+			
 			request({
 				"method" : 'POST',
 				"url" : self.getProtocol()+'://'+self.getIp()+'/fmi/rest/api/auth/'+self.getSolution(),
@@ -246,7 +247,6 @@ var filemaker = (options) => {
 				"body" : self.getBody()
 			}, (error, response, body) => {
 				if(!error) {
-					console.log(response);
 					self.setResult(body);
 					callback(null, body);
 				} else {

@@ -283,12 +283,12 @@ describe('#FILEMAKER TESTS', function() {
 				"sort" : [{"fieldName" : "Last", "sortOrder" : "descend"}],
 				"offset" : "10",
 				"range" : "10",
-				/*"portal" : {
+				"portal" : {
 					"Portal1" : {
-						"offset" : 1,
-						"range" : 2
+						"offset" : "1",
+						"range" : "2"
 					}					
-				}*/
+				}
 			};
 			filemaker.find(layout, params, function(error, result) {
 				if(!error) {
@@ -306,12 +306,12 @@ describe('#FILEMAKER TESTS', function() {
 	});
 	
 	describe('#GLOBAL FIELDS', function(){
-		var filemaker = filemakerTests(loginHeaders);
+		var filemaker;
 		
 		before(function (done) {
+			filemaker = filemakerTests(loginHeaders);
 			filemaker.login(function(error, result) {
 				if(error) {
-					console.log('here');
 					done(error);
 				} else {
 					done();
