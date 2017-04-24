@@ -46,8 +46,10 @@ With the introduction of REST to the FileMaker server in version 16 and with the
 You first need to make sure that **Contacts.fmp12** has been added to **FileMaker Server 16**.
 *FileMaker Server 16 is required as this is the first version of server that implemented the REST API*.
 
-
-NOT CURRENTLY PUBLISHED TO NPM
+```
+cd ROOT_FOLDER
+npm install filemaker-rest-connector
+```
 
 ## API Reference
 
