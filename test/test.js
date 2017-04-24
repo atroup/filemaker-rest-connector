@@ -15,26 +15,27 @@ var loginHeaders = {
 
 describe('#FILEMAKER TESTS', function() {
 	describe('#CONSTRUCTOR', function () {
+		var filemaker;
 		it('Get Protocol', function() {
-			var filemaker = filemakerTests(loginHeaders);
+			filemaker = filemakerTests(loginHeaders);
 			var result = filemaker.getProtocol();
 			expect(result).to.equal(loginHeaders.protocol);
 		});
 		
 		it('Get IP', function() {
-			var filemaker = filemakerTests(loginHeaders);
+			filemaker = filemakerTests(loginHeaders);
 			var result = filemaker.getIp();
 			expect(result).to.equal(loginHeaders.ip);
 		});
 		
 		it('Get Solution', function() {
-			var filemaker = filemakerTests(loginHeaders);
+			filemaker = filemakerTests(loginHeaders);
 			var result = filemaker.getSolution();
 			expect(result).to.equal(loginHeaders.solution);
 		});
 		
 		it('Set/Get Headers', function() {
-			var filemaker = filemakerTests();
+			filemaker = filemakerTests();
 			var headers = {"Content-Type" : "application/json"};
 			filemaker.setHeaders(headers);
 			var result = filemaker.getHeaders();
@@ -42,7 +43,7 @@ describe('#FILEMAKER TESTS', function() {
 		});
 		
 		it('Set/Get Body', function() {
-			var filemaker = filemakerTests();
+			filemaker = filemakerTests();
 			var body = {"user" : "Username", "password" : "Password", "layout": "Layout"};
 			filemaker.setBody(body);
 			var result = filemaker.getBody();
@@ -50,7 +51,7 @@ describe('#FILEMAKER TESTS', function() {
 		});
 		
 		it('Set/Get Result', function() {
-			var filemaker = filemakerTests();
+			filemaker = filemakerTests();
 			var resultT = {"errorCode" : "0", "layout" : "Layout", "token": "FM-Token"};
 			filemaker.setResult(resultT);
 			var result = filemaker.getResult();
@@ -58,15 +59,36 @@ describe('#FILEMAKER TESTS', function() {
 		});
 		
 		it('Set/Get Token', function() {
-			var filemaker = filemakerTests();
+			filemaker = filemakerTests(loginHeaders);
 			var token = '123qweasdzxc';
 			filemaker.setToken(token);
 			var result = filemaker.getToken();
 			expect(result).to.deep.equal(token);
 		});
 		
+		it('Invalid Token', function(done){
+			filemaker = filemakerTests(loginHeaders);
+			var token = '123qweasdzxc';
+			filemaker.setToken(token);
+			filemaker.validToken(layout, function(error, result) {
+				if(!error) {
+					if(result.errorCode === '952') {
+						done();
+					}
+					else if (result.errorCode !== '0') {
+						done(result.errorMessage);
+					}
+					else {
+						done(result.errorMessage);
+					}				
+				} else {
+					done(error);
+				}
+			});
+		});
+		
 		it('Set/Get RecordId', function() {
-			var filemaker = filemakerTests();
+			filemaker = filemakerTests();
 			var recordId = '100';
 			filemaker.setRecordId(recordId);
 			var result = filemaker.getRecordId();
