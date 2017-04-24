@@ -6,15 +6,35 @@ NPM Package to make queries to FileMaker's REST API. Will allow node.js to commu
 
 ## Code Example
 
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
+'''
+var FileMaker = require('filemaker');
+var filemaker = new FileMaker();
+filemaker.login(function(error, result) {
+    if(error) {
+        // Handle error
+    } else {
+        if(result.errorCode ==! '0') {
+            // Handle FileMaker Error
+        } else {
+            // Success
+        }
+    }
+};)
+'''
+
+This is an example of how to authenticate using the function. You first test if an error occurred. This will be an error from the Request to the server. You then test for a FileMaker error that may have occurred. If there are none of these errors then the function executed correctly.
 
 ## Motivation
 
-A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
+With the introduction of REST to the FileMaker server in version 16 and with the world of javascript exloding in the recent years. We decided that it would be prudent to develop an easy helpful wrapper module on npm. That would use FileMakers REST API extremly easy to use.
 
 ## Installation
 
-Provide code examples and explanations of how to get the project.
+You first need to make sure that **Contacts.fmp12** has been added to **FileMaker Server 16**.
+*FileMaker Server 16 is required as this is the first version of server that implemented the REST API*.
+
+
+NOT CURRENTLY PUBLISHED TO NPM
 
 ## API Reference
 
