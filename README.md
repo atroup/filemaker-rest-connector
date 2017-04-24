@@ -6,9 +6,17 @@ NPM Package to make queries to FileMaker's REST API. Will allow node.js to commu
 
 ## Code Example
 
-'''
+```
 var FileMaker = require('filemaker');
-var filemaker = new FileMaker();
+var filemaker = new FileMaker(
+    {
+	    "protocol" : "https",
+	    "ip" : "127.0.0.1",
+	    "solution" : "contacts",
+	    "headers" : {"Content-Type" : "application/json"},
+	    "body" : {"user" : "Admin", "password" : "Admin", "layout": layout}
+}
+);
 filemaker.login(function(error, result) {
     if(error) {
         // Handle error
@@ -20,9 +28,13 @@ filemaker.login(function(error, result) {
         }
     }
 };)
-'''
+```
 
-This is an example of how to authenticate using the function. You first test if an error occurred. This will be an error from the Request to the server. You then test for a FileMaker error that may have occurred. If there are none of these errors then the function executed correctly.
+This is an example of how to authenticate to get an Access Token.
+1. Initailse the object with a JSON object.
+2. Test for a request error
+3. Test for a FileMaker error
+4. Handle success response object
 
 ## Motivation
 
