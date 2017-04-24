@@ -9,7 +9,8 @@ var loginHeaders = {
 	"ip" : "127.0.0.1",
 	"solution" : "contacts",
 	"headers" : {"Content-Type" : "application/json"},
-	"body" : {"user" : "Admin", "password" : "Admin", "layout": layout}
+	"body" : {"user" : "Admin", "password" : "Admin", "layout": layout},
+	"selfSignedCertificate" : true
 }
 
 describe('#FILEMAKER TESTS', function() {

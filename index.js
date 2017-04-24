@@ -17,16 +17,17 @@ var filemaker = (options) => {
 	/**
 	 * Create the Constructor Object
 	 * @namespace [[{Object}] Self]
-	 * @property {Object} self				Values passed to Constructor
-	 * @property {Object} self.options		Default values for constructor object
-	 * @property {String} self.protocol		Default Protocol
-	 * @property {String} self.ip			Default IP
-	 * @property {String} self.solution		Default Solution Name
-	 * @property {Object} self.headers		Default Headers
-	 * @property {Object} self.body			Default Body
-	 * @property {Object} self.result		Result object passed back from API
-	 * @property {String} self.token		Authentication token passed back from API
-	 * @property {String} self.recordId		Last Record Id when request dealt with a single record.
+	 * @property {Object} self							Values passed to Constructor
+	 * @property {Object} self.options					Default values for constructor object
+	 * @property {String} self.protocol					Default Protocol
+	 * @property {String} self.ip						Default IP
+	 * @property {String} self.solution					Default Solution Name
+	 * @property {Object} self.headers					Default Headers
+	 * @property {Object} self.body						Default Body
+	 * @property {Object} self.selfSignedCertificate	Use of Self Signed Certificate
+	 * @property {Object} self.result					Result object passed back from API
+	 * @property {String} self.token					Authentication token passed back from API
+	 * @property {String} self.recordId					Last Record Id when request dealt with a single record.
 	 */
 	var self = this;
 	self.options = options || {};
@@ -35,6 +36,7 @@ var filemaker = (options) => {
 	self.solution = (!self.options.solution) ? {} : self.options.solution;
 	self.headers = (!self.options.headers) ? {} : self.options.headers;
 	self.body = (!self.options.body) ? {} : self.options.body;
+	self.selfSignedCertificate = (self.options.selfSignedCertificate == true) ? {"rejectUnauthorized" : false} : {"rejectUnauthorized" : true};
 	self.result = {};
 	self.token = '';
 	self.recordId = '';
@@ -106,9 +108,17 @@ var filemaker = (options) => {
 		setBody: (body) => {self.body = body;},
 		
 		/**
+		 * @function getSelfSignedCertificate
+		 * @author Steven McGill <steven@whitespacesystems.co.uk>
+		 * @returns {Boolean} Use of Self Signed Certificate for SSL. i.e.
+		 */
+		
+		getSelfSignedCertificate: () => {return self.selfSignedCertificate;},
+		
+		/**
 		 * @function getResult
 		 * @author Steven McGill <steven@whitespacesystems.co.uk>
-		 * @returns {Object} The Result object passed back from the API Call
+		 * @returns {Boolean} If user is using Self Signed Certficate
 		 */
 		
 		getResult: () => {return self.result;},
@@ -183,9 +193,7 @@ var filemaker = (options) => {
 				"method" : 'POST',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true,
 				"body" : self.getBody()
 			}, (error, response, body) => {
@@ -225,9 +233,7 @@ var filemaker = (options) => {
 				"method" : 'DELETE',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true,
 			}, (error, response, body) => {
 				if(!error) {
@@ -284,9 +290,7 @@ var filemaker = (options) => {
 				"method" : 'POST',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true,
 				"body" : self.getBody()
 			}, (error, response, body) => {
@@ -343,9 +347,7 @@ var filemaker = (options) => {
 				"method" : 'PUT',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true,
 				"body" : self.getBody()
 			}, (error, response, body) => {
@@ -388,9 +390,7 @@ var filemaker = (options) => {
 				"method" : 'DELETE',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true
 			}, (error, response, body) => {
 				if(!error) {
@@ -451,9 +451,7 @@ var filemaker = (options) => {
 				"method" : 'GET',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true
 			}, (error, response, body) => {
 				if(!error) {
@@ -522,9 +520,7 @@ var filemaker = (options) => {
 				"method" : 'GET',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true
 			}, (error, response, body) => {
 				if(!error) {
@@ -603,9 +599,7 @@ var filemaker = (options) => {
 				"method" : 'POST',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true,
 				"body" : self.getBody()
 			}, (error, response, body) => {
@@ -648,9 +642,7 @@ var filemaker = (options) => {
 				"method" : 'PUT',
 				"url" : url,
 				"headers" : self.getHeaders(),
-				"agentOptions" : {
-					"rejectUnauthorized" : false
-				},
+				"agentOptions" : self.getSelfSignedCertificate(),
 				"json" : true,
 				"body" : self.getBody()
 			}, (error, response, body) => {
@@ -665,28 +657,29 @@ var filemaker = (options) => {
 	};
 	
 	// Declare all the functions available.
-	self.getProtocol 	= Methods.getProtocol;
-	self.getIp		 	= Methods.getIp;
-	self.getSolution 	= Methods.getSolution;
-	self.getHeaders 	= Methods.getHeaders;
-	self.setHeaders 	= Methods.setHeaders;
-	self.getBody 		= Methods.getBody;
-	self.setBody 		= Methods.setBody;
-	self.getResult		= Methods.getResult;
-	self.setResult		= Methods.setResult;
-	self.getToken		= Methods.getToken;
-	self.setToken		= Methods.setToken;
-	self.getRecordId	= Methods.getRecordId;
-	self.setRecordId	= Methods.setRecordId;
-	self.login		 	= Methods.login;
-	self.logout		 	= Methods.logout;
-	self.create		 	= Methods.create;
-	self.edit		 	= Methods.edit;
-	self.delete		 	= Methods.delete;
-	self.getRecords		= Methods.getRecords;
-	self.getRecord		= Methods.getRecord;
-	self.find			= Methods.find;
-	self.setGlobals		= Methods.setGlobals;
+	self.getProtocol 				= Methods.getProtocol;
+	self.getIp		 				= Methods.getIp;
+	self.getSolution 				= Methods.getSolution;
+	self.getHeaders 				= Methods.getHeaders;
+	self.setHeaders 				= Methods.setHeaders;
+	self.getBody 					= Methods.getBody;
+	self.setBody 					= Methods.setBody;
+	self.getSelfSignedCertificate	= Methods.getSelfSignedCertificate;
+	self.getResult					= Methods.getResult;
+	self.setResult					= Methods.setResult;
+	self.getToken					= Methods.getToken;
+	self.setToken					= Methods.setToken;
+	self.getRecordId				= Methods.getRecordId;
+	self.setRecordId				= Methods.setRecordId;
+	self.login		 				= Methods.login;
+	self.logout		 				= Methods.logout;
+	self.create		 				= Methods.create;
+	self.edit		 				= Methods.edit;
+	self.delete		 				= Methods.delete;
+	self.getRecords					= Methods.getRecords;
+	self.getRecord					= Methods.getRecord;
+	self.find						= Methods.find;
+	self.setGlobals					= Methods.setGlobals;
 	
 	return self;
 };
