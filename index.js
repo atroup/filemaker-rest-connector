@@ -246,6 +246,31 @@ var filemaker = (options) => {
 			});
 		},
 		
+		validToken: (layout, callback) => {
+			
+			var url = self.getProtocol()+'://'+self.getIp()+'/fmi/rest/api/record/'+self.getSolution()+'/'+layout+'?range=1';
+			
+			// Set Headers and Body
+			self.setHeaders({"FM-Data-token" : self.getToken()});
+			
+			// Make the API Call
+			request({
+				"method" : 'GET',
+				"url" : url,
+				"headers" : self.getHeaders(),
+				"agentOptions" : self.getSelfSignedCertificate(),
+				"json" : true
+			}, (error, response, body) => {
+				if(!error) {
+					self.setResult(body);
+					callback(null, body);
+				} else {
+					callback(error);
+				}
+			});
+			
+		},
+		
 		/**
 		 * @function create
 		 * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -673,6 +698,7 @@ var filemaker = (options) => {
 	self.setRecordId				= Methods.setRecordId;
 	self.login		 				= Methods.login;
 	self.logout		 				= Methods.logout;
+	self.validToken	 				= Methods.validToken;
 	self.create		 				= Methods.create;
 	self.edit		 				= Methods.edit;
 	self.delete		 				= Methods.delete;
