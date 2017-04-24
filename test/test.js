@@ -9,7 +9,7 @@ var loginHeaders = {
 	"ip" : "127.0.0.1",
 	"solution" : "contacts",
 	"headers" : {"Content-Type" : "application/json"},
-	"body" : {"user" : "StevenAdmin", "password" : "steven", "layout": layout}
+	"body" : {"user" : "Admin", "password" : "Admin", "layout": layout}
 }
 
 describe('#FILEMAKER TESTS', function() {
@@ -294,7 +294,7 @@ describe('#FILEMAKER TESTS', function() {
 			});
 			
 			it('Get Record', function(done) {
-				filemaker.getRecord(layout, null, 2, function(error, result) {
+				filemaker.getRecord(layout, null, 1041, function(error, result) {
 					if(result.errorMessage === 'Missing FM-Data-token.') {
 						done(result.errorMessage);
 					} else if (result.errorCode !== '0') {
@@ -314,7 +314,7 @@ describe('#FILEMAKER TESTS', function() {
 							}					
 						}
 					};
-				filemaker.getRecord(layout, params, 2, function(error, result) {
+				filemaker.getRecord(layout, params, 1041, function(error, result) {
 					if(result.errorMessage === 'Missing FM-Data-token.') {
 						done(result.errorMessage);
 					} else if (result.errorCode !== '0') {
@@ -344,7 +344,7 @@ describe('#FILEMAKER TESTS', function() {
 		
 		it('Find Records', function(done) {
 			var params = {
-				"query" : [{"Video" : "Video", "omit" : "false"}],
+				"query" : [{"Title" : "Mr", "omit" : "false"}],
 				"sort" : [{"fieldName" : "Last", "sortOrder" : "descend"}],
 				"offset" : "10",
 				"range" : "10",
