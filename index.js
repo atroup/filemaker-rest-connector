@@ -198,6 +198,7 @@ var filemaker = (options) => {
 				"body" : self.getBody()
 			}, (error, response, body) => {
 				if(!error) {
+					// TODO: Need to handle any non 202 HTTP response
 					self.setResult(body);
 					self.setToken(body.token);
 					callback(null, body);
