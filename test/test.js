@@ -78,10 +78,14 @@ describe('#FILEMAKER TESTS', function() {
 					else if (result.errorCode !== '0') {
 						done(result.errorMessage);
 					}
+					else if (result.errorMessage !== '') {
+						done(result.errorMessage);
+					}
 					else {
 						done(result.errorMessage);
 					}				
 				} else {
+					
 					done(error);
 				}
 			});
@@ -112,7 +116,9 @@ describe('#FILEMAKER TESTS', function() {
 							done(result.errorMessage);
 						}
 						else {
-							done();
+							filemaker.logout(function(error, result) {
+								done();
+							});
 						}				
 					} else {
 						done(error);
@@ -166,6 +172,17 @@ describe('#FILEMAKER TESTS', function() {
 				}
 			});
 			
+		});
+		
+		afterEach(function (done) {
+			filemaker.logout(function(error, result){
+				if(error) {
+					done(error);
+				} else {
+					
+					done();
+				}
+			});
 		});
 		
 		describe('#CREATE/EDIT/DELETE', function(){
@@ -365,6 +382,17 @@ describe('#FILEMAKER TESTS', function() {
 			});
 		});
 		
+		after(function (done) {
+			filemaker.logout(function(error, result){
+				if(error) {
+					done(error);
+				} else {
+					
+					done();
+				}
+			});
+		});
+		
 		it('Find Records', function(done) {
 			var params = {
 				"query" : [{"Title" : "Mr", "omit" : "false"}],
@@ -402,6 +430,17 @@ describe('#FILEMAKER TESTS', function() {
 				if(error) {
 					done(error);
 				} else {
+					done();
+				}
+			});
+		});
+		
+		after(function (done) {
+			filemaker.logout(function(error, result){
+				if(error) {
+					done(error);
+				} else {
+					
 					done();
 				}
 			});
