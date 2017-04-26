@@ -11,6 +11,22 @@
 // We require the ability to perform CUSTOM HTTP Requests to the FileMaker Server
 var request = require('request');
 
+//Handle Ways to Exit the Node.
+process.once('exit', function(err){
+	console.log('exit', err);
+	process.exit();
+});
+
+process.once('SIGINT', function(err){
+	console.log('SIGINT', err);
+	process.exit();
+});
+
+process.once('uncaughtException', function(err){
+	console.log('uncaughtException', err);
+	process.exit();
+});
+
 // Building of the filemaker object
 var filemaker = (options) => {
 	
@@ -147,7 +163,7 @@ var filemaker = (options) => {
 		 * @returns {Void} 
 		 */
 		
-		setToken: (token) => {self.token = token;},
+		setToken: (token) => {self.token = token; token = token;},
 		
 		/**
 		 * @function getRecordId
@@ -248,7 +264,6 @@ var filemaker = (options) => {
 		},
 		
 		validToken: (layout, callback) => {
-			
 			var url = self.getProtocol()+'://'+self.getIp()+'/fmi/rest/api/record/'+self.getSolution()+'/'+layout+'?range=1';
 			
 			// Set Headers and Body
@@ -679,22 +694,6 @@ var filemaker = (options) => {
 					callback(error);
 				}
 			});
-		},
-		
-		/**
-		 * @function exitHandler
-		 * @author Steven McGill <steven@whitespacesystems.co.uk>
-		 * @description Will logout of the FileMaker Server Gracefully on errors.
-		 * @returns {Void}
-		 */
-		exitHandler: () =>{
-			if (self.getToken !== '') {
-				self.logout((err, result) => {
-					process.exit();
-				});
-			} else {
-				process.exit();
-			}
 		}
 	};
 	
@@ -723,20 +722,6 @@ var filemaker = (options) => {
 	self.getRecord					= Methods.getRecord;
 	self.find						= Methods.find;
 	self.setGlobals					= Methods.setGlobals;
-	self.exitHandler				= Methods.exitHandler;
-	
-	// Handle Ways to Exit the Node.
-	process.on('exit', function(){
-		self.exitHandler();
-	});
-	
-	process.on('SIGINT', function(){
-		self.exitHandler();
-	});
-	
-	process.on('uncaughtException', function(){
-		self.exitHandler();
-	});
 	
 	return self;
 };
