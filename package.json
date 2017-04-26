@@ -1,6 +1,6 @@
 {
   "name": "filemaker-rest-connector",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "NPM Package to make queries to FileMaker's REST API. Will allow node.js to communicate with the FileMaker Server DATA REST API.",
   "main": "index.js",
   "scripts": {
