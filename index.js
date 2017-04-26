@@ -708,6 +708,36 @@ var filemaker = (options) => {
 	self.find						= Methods.find;
 	self.setGlobals					= Methods.setGlobals;
 	
+	/**
+	 * @function exitHandler
+	 * @author Steven McGill <steven@whitespacesystems.co.uk>
+	 * @description Will logout of the FileMaker Server Gracefully on errors.
+	 * @param {Object} self			FileMaker Object
+	 * @returns {Void}
+	 */
+	function exitHandler (self){
+		if (self.getToken !== '') {
+			self.logout((err, result) => {
+				process.exit();
+			});
+		} else {
+			process.exit();
+		}
+	}
+	
+	// Handle Ways to Exit the Node.
+	process.on('exit', function(){
+		exitHandler(self);
+	});
+	
+	process.on('SIGINT', function(){
+		exitHandler(self);
+	});
+	
+	process.on('uncaughtException', function(){
+		exitHandler(self);
+	});
+	
 	return self;
 };
 
