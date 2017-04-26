@@ -11,22 +11,6 @@
 // We require the ability to perform CUSTOM HTTP Requests to the FileMaker Server
 var request = require('request');
 
-//Handle Ways to Exit the Node.
-process.once('exit', function(err){
-	console.log('exit', err);
-	process.exit();
-});
-
-process.once('SIGINT', function(err){
-	console.log('SIGINT', err);
-	process.exit();
-});
-
-process.once('uncaughtException', function(err){
-	console.log('uncaughtException', err);
-	process.exit();
-});
-
 // Building of the filemaker object
 var filemaker = (options) => {
 	
