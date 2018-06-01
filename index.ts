@@ -54,7 +54,7 @@ var filemaker = options => {
      * @namespace [[{Object}] Methods]
      * @memberof self
      */
-    var Methods = {
+    const Methods = {
         /**
          * @function getProtocol
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -216,7 +216,6 @@ var filemaker = options => {
          * @callback callback
          * @param {Object} error		Error object passed back from request call
          * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          * @todo FileMaker allows for oAuth to occur, this still needs to be implemented.
          */
 
@@ -229,7 +228,6 @@ var filemaker = options => {
              * URL to submit to the FileMaker REST API
              */
             var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/sessions`;
-
             return new Promise((resolve, reject) => {
                 // Make the API Call
                 request(
@@ -262,40 +260,40 @@ var filemaker = options => {
          * @callback callback
          * @param {Object} error		Error object passed back from request call
          * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          */
 
-        logout: callback => {
+        logout: (): Promise<{}> => {
             /**
              * URL to submit to the FileMaker REST API
-             * @var {String} url
              */
             var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/sessions/${self.getToken()}`;
 
             // Set Headers and Body
             self.setHeaders({
-                "FM-Data-token": self.getToken()
+                "X-FM-Data-Access-Token": self.getToken()
             });
 
-            // Make the API Call
-            request(
-                {
-                    method: "DELETE",
-                    url: url,
-                    headers: self.getHeaders(),
-                    agentOptions: self.getSelfSignedCertificate(),
-                    json: true
-                },
-                (error, response, body) => {
-                    if (!error) {
-                        self.setResult(body);
-                        self.setToken("");
-                        callback(null, body);
-                    } else {
-                        callback(error);
+            return new Promise((resolve, reject) => {
+                // Make the API Call
+                request(
+                    {
+                        method: "DELETE",
+                        url: url,
+                        headers: self.getHeaders(),
+                        agentOptions: self.getSelfSignedCertificate(),
+                        json: true
+                    },
+                    (error: object, response: object, body: object) => {
+                        if (!error) {
+                            self.setResult(body);
+                            self.setToken("");
+                            resolve(body);
+                        } else {
+                            reject(error);
+                        }
                     }
-                }
-            );
+                );
+            });
         },
 
         validToken: (layout, callback) => {
@@ -347,61 +345,55 @@ var filemaker = options => {
          * @returns {Void}
          */
 
-        create: (layout, params, callback) => {
+        create: (layout: string, params?: object): Promise<{}> => {
             /**
              * This will contain the data to be passed to the record creation
-             * @var {Object} body
              */
-            var body = {};
+            var body: object = {};
 
             /**
              * URL to submit to the FileMaker REST API
-             * @var {String} url
              */
+            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records`;
 
-            var url =
-                self.getProtocol() +
-                "://" +
-                self.getIp() +
-                "/fmi/rest/api/record/" +
-                self.getSolution() +
-                "/" +
-                layout;
-
-            if (params === null) {
+            if (params === null || params === undefined) {
                 // EMPTY Record being created
-                body.data = {};
+                body = {
+                    fieldData: {}
+                };
             } else {
-                body.data = params;
+                body = params;
             }
 
             // Set Headers and Body
             self.setHeaders({
                 "Content-Type": "application/json",
-                "FM-Data-token": self.getToken()
+                Authorization: "Bearer " + self.getToken()
             });
             self.setBody(body);
 
-            // Make the API Call
-            request(
-                {
-                    method: "POST",
-                    url: url,
-                    headers: self.getHeaders(),
-                    agentOptions: self.getSelfSignedCertificate(),
-                    json: true,
-                    body: self.getBody()
-                },
-                (error, response, body) => {
-                    if (!error) {
-                        self.setResult(body);
-                        self.setRecordId(body.recordId);
-                        callback(null, body);
-                    } else {
-                        callback(error);
+            return new Promise((resolve, reject) => {
+                // Make the API Call
+                request(
+                    {
+                        method: "POST",
+                        url: url,
+                        headers: self.getHeaders(),
+                        agentOptions: self.getSelfSignedCertificate(),
+                        json: true,
+                        body: self.getBody()
+                    },
+                    (error: object, response: object, body: object) => {
+                        if (!error) {
+                            self.setResult(body);
+                            self.setRecordId(body.recordId);
+                            resolve(body);
+                        } else {
+                            reject(error);
+                        }
                     }
-                }
-            );
+                );
+            });
         },
 
         /**
