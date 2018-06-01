@@ -442,7 +442,7 @@ var filemaker = options => {
             body.data = params;
             self.setHeaders({
                 "Content-Type": "application/json",
-                "FM-Data-token": self.getToken()
+                Authorization: "Bearer " + self.getToken()
             });
             self.setBody(body);
 
@@ -499,7 +499,7 @@ var filemaker = options => {
 
             // Set Headers and Body
             self.setHeaders({
-                "FM-Data-token": self.getToken()
+                Authorization: "Bearer " + self.getToken()
             });
 
             // Make the API Call
@@ -530,29 +530,18 @@ var filemaker = options => {
          * @param {String} layout		Layout name to use.
          * @param {Object} params		Portal Object information
          * @param {String} recordId		Internal FileMaker Record Id
-         * @callback callback
-         * @param {Object} error		Error object passed back from request call
-         * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          */
 
-        getRecord: (layout, params, recordId, callback) => {
+        getRecord: (
+            layout: string,
+            params: any,
+            recordId: string
+        ): Promise<{}> => {
             /**
              * URL to submit to the FileMaker REST API
-             * @var {String} url
              */
 
-            var url =
-                self.getProtocol() +
-                "://" +
-                self.getIp() +
-                "/fmi/rest/api/record/" +
-                self.getSolution() +
-                "/" +
-                layout +
-                "/" +
-                recordId +
-                "?";
+            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
 
             // Portal Settings
             if (params) {
@@ -584,28 +573,30 @@ var filemaker = options => {
 
             // Set Headers and Body
             self.setHeaders({
-                "FM-Data-token": self.getToken()
+                Authorization: "Bearer " + self.getToken()
             });
 
-            // Make the API Call
-            request(
-                {
-                    method: "GET",
-                    url: url,
-                    headers: self.getHeaders(),
-                    agentOptions: self.getSelfSignedCertificate(),
-                    json: true
-                },
-                (error, response, body) => {
-                    if (!error) {
-                        self.setResult(body);
-                        self.setRecordId(body.data[0].recordId);
-                        callback(null, body);
-                    } else {
-                        callback(error);
+            return new Promise((reject, resolve) => {
+                // Make the API Call
+                request(
+                    {
+                        method: "GET",
+                        url: url,
+                        headers: self.getHeaders(),
+                        agentOptions: self.getSelfSignedCertificate(),
+                        json: true
+                    },
+                    (error, response, body) => {
+                        if (!error) {
+                            self.setResult(body);
+                            self.setRecordId(body.data[0].recordId);
+                            resolve(body);
+                        } else {
+                            reject(error);
+                        }
                     }
-                }
-            );
+                );
+            });
         },
 
         /**
@@ -617,24 +608,14 @@ var filemaker = options => {
          * @callback callback
          * @param {Object} error		Error object passed back from request call
          * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          */
 
-        getRecords: (layout, params, callback) => {
+        getRecords: (layout: string, params: any): Promise<{}> => {
             /**
              * URL to submit to the FileMaker REST API
-             * @var {String} url
              */
 
-            var url =
-                self.getProtocol() +
-                "://" +
-                self.getIp() +
-                "/fmi/rest/api/record/" +
-                self.getSolution() +
-                "/" +
-                layout +
-                "?";
+            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records?`;
 
             // Format the Query Parameters into the API URL
             if (params) {
@@ -675,27 +656,29 @@ var filemaker = options => {
 
             // Set Headers and Body
             self.setHeaders({
-                "FM-Data-token": self.getToken()
+                Authorization: "Bearer " + self.getToken()
             });
 
-            // Make the API Call
-            request(
-                {
-                    method: "GET",
-                    url: url,
-                    headers: self.getHeaders(),
-                    agentOptions: self.getSelfSignedCertificate(),
-                    json: true
-                },
-                (error, response, body) => {
-                    if (!error) {
-                        self.setResult(body);
-                        callback(null, body);
-                    } else {
-                        callback(error);
+            return new Promise((reject, resolve) => {
+                // Make the API Call
+                request(
+                    {
+                        method: "GET",
+                        url: url,
+                        headers: self.getHeaders(),
+                        agentOptions: self.getSelfSignedCertificate(),
+                        json: true
+                    },
+                    (error: object, response: object, body: object) => {
+                        if (!error) {
+                            self.setResult(body);
+                            resolve(body);
+                        } else {
+                            reject(error);
+                        }
                     }
-                }
-            );
+                );
+            });
         },
 
         /**
@@ -710,28 +693,19 @@ var filemaker = options => {
          * @returns {Void}
          */
 
-        find: (layout, params, callback) => {
+        find: (layout: string, params: object): Promise<{}> => {
             /**
              * URL to submit to the FileMaker REST API
-             * @var {String} url
              */
 
-            var url =
-                self.getProtocol() +
-                "://" +
-                self.getIp() +
-                "/fmi/rest/api/find/" +
-                self.getSolution() +
-                "/" +
-                layout +
-                "/";
+            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/_find?`;
 
             /**
              * This will contain the parameters to be passed to perform the find
              * @var {Object} body
              */
 
-            var body = {};
+            var body: object = {};
 
             // Format the Find Parameters into a JSON object to be passed to the API
             if (params) {
@@ -767,29 +741,31 @@ var filemaker = options => {
 
             // Set Headers and Body
             self.setHeaders({
-                "FM-Data-token": self.getToken()
+                Authorization: "Bearer " + self.getToken()
             });
             self.setBody(body);
 
-            // Make the API Call
-            request(
-                {
-                    method: "POST",
-                    url: url,
-                    headers: self.getHeaders(),
-                    agentOptions: self.getSelfSignedCertificate(),
-                    json: true,
-                    body: self.getBody()
-                },
-                (error, response, body) => {
-                    if (!error) {
-                        self.setResult(body);
-                        callback(null, body);
-                    } else {
-                        callback(error);
+            return new Promise((resolve, reject) => {
+                // Make the API Call
+                request(
+                    {
+                        method: "POST",
+                        url: url,
+                        headers: self.getHeaders(),
+                        agentOptions: self.getSelfSignedCertificate(),
+                        json: true,
+                        body: self.getBody()
+                    },
+                    (error: object, response: object, body: object) => {
+                        if (!error) {
+                            self.setResult(body);
+                            resolve(body);
+                        } else {
+                            reject(error);
+                        }
                     }
-                }
-            );
+                );
+            });
         },
 
         /**
