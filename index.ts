@@ -50,15 +50,43 @@ var filemaker = (options: any) => {
     delete self.options;
 
     /* helper functions */
-    function setApiScripts(params: any, url: string) {
+    function setApiScriptsURL(params: any, url: string) {
         if (params) {
             if (params.hasOwnProperty("preRequestScript")) {
-                url += `script.prerequest=${
+                url += `&script.prerequest=${
                     params.preRequestScript
                 }&script.prerequest.param=${params.preRequestScriptParams}`;
             }
+            if (params.hasOwnProperty("script")) {
+                url += `&script=${params.script}&script.param=${
+                    params.scriptParams
+                }`;
+            }
+            if (params.hasOwnProperty("preSortScript")) {
+                url += `&script.presort=${
+                    params.preSortScript
+                }&script.presort.param=${params.preSortScriptParams}`;
+            }
         }
         return url;
+    }
+
+    function setApiScriptsBody(params: any, body: any) {
+        if (params) {
+            if (params.hasOwnProperty("preRequestScript")) {
+                body.script.prerequest = params.preRequestScript;
+                body.script.prerequest.param = params.preRequestScriptParams;
+            }
+            if (params.hasOwnProperty("script")) {
+                body.script = params.script;
+                body.script.param = params.scriptParams;
+            }
+            if (params.hasOwnProperty("preSortScript")) {
+                body.script.presort = params.preSortScript;
+                body.script.presort.param = params.preSortScriptParams;
+            }
+        }
+        return body;
     }
 
     /**
@@ -308,8 +336,9 @@ var filemaker = (options: any) => {
             });
         },
 
-        validToken: (layout: string) => {
+        validToken: (layout: string, params: object) => {
             var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records?_offset=1&_limit=1`;
+            url = setApiScriptsURL(params, url);
 
             // Set Headers and Body
             self.setHeaders({
@@ -370,6 +399,9 @@ var filemaker = (options: any) => {
             } else {
                 body = params;
             }
+
+            /* set scripts */
+            setApiScriptsBody(params, body);
 
             // Set Headers and Body
             self.setHeaders({
@@ -433,6 +465,9 @@ var filemaker = (options: any) => {
 
             // Set Headers and Body
             body = params;
+            /* set scripts */
+            setApiScriptsBody(params, body);
+
             self.setHeaders({
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + self.getToken()
@@ -485,7 +520,7 @@ var filemaker = (options: any) => {
              */
 
             var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
-            url = setApiScripts(params, url);
+            url = setApiScriptsURL(params, url);
 
             // Set Headers and Body
             self.setHeaders({
@@ -534,6 +569,7 @@ var filemaker = (options: any) => {
              */
 
             var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
+            url = setApiScriptsURL(params, url);
 
             // Portal Settings
             if (params) {
@@ -606,6 +642,7 @@ var filemaker = (options: any) => {
              * URL to submit to the FileMaker REST API
              */
             var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}`;
+            url = setApiScriptsURL(params, url);
 
             // Format the Query Parameters into the API URL
             if (params) {
@@ -697,6 +734,9 @@ var filemaker = (options: any) => {
              */
 
             var body: any = {};
+
+            /* set scripts */
+            setApiScriptsBody(params, body);
 
             // Format the Find Parameters into a JSON object to be passed to the API
             if (params) {
@@ -822,6 +862,8 @@ var filemaker = (options: any) => {
             field_repetition: string,
             params: object
         ): Promise<{}> => {
+            var body: any = {};
+
             /**
              * URL to submit to the FileMaker REST API
              */
@@ -832,7 +874,9 @@ var filemaker = (options: any) => {
                 "Content-type": "multipart/form-data ",
                 Authorization: "Bearer " + self.getToken()
             });
-            self.setBody(params);
+            /* set scripts */
+            setApiScriptsBody(params, body);
+            self.setBody(body);
 
             return new Promise((reject, resolve) => {
                 // Make the API Call
