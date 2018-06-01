@@ -9,7 +9,7 @@
 "use strict";
 
 // We require the ability to perform CUSTOM HTTP Requests to the FileMaker Server
-var request = require("request");
+const request = require("request");
 
 // Building of the filemaker object
 var filemaker = (options: any) => {
@@ -35,7 +35,7 @@ var filemaker = (options: any) => {
     self.solution = !self.options.solution ? {} : self.options.solution;
     self.headers = !self.options.headers ? {} : self.options.headers;
     self.body = !self.options.body ? {} : self.options.body;
-    self.APIversion = !self.options.APIversion ? {} : self.options.APIversion;
+    self.APIversion = !self.options.APIversion ? "v1" : self.options.APIversion;
     self.selfSignedCertificate =
         self.options.selfSignedCertificate == true
             ? {
@@ -432,7 +432,7 @@ var filemaker = (options: any) => {
                 // Make the API Call
                 request(
                     {
-                        method: "PUT",
+                        method: "PATCH",
                         url: url,
                         headers: self.getHeaders(),
                         agentOptions: self.getSelfSignedCertificate(),
@@ -726,6 +726,7 @@ var filemaker = (options: any) => {
 
             // Set Headers and Body
             self.setHeaders({
+                "Content-Type": "application/json",
                 Authorization: "Bearer " + self.getToken()
             });
             self.setBody(body);
@@ -799,10 +800,59 @@ var filemaker = (options: any) => {
                     }
                 );
             });
+        },
+
+        /**
+         * @function uploadToContainer
+         * @author Connect Solutions <info@connect.solutions>
+         * @description Will upload to a container field
+         * @param {String} layout		Layout name to use.
+         * @param {Object} params		Global Fields
+         */
+        uploadToContainer: (
+            layout: string,
+            recordId: string,
+            field: string,
+            field_repetition: string,
+            params: object
+        ): Promise<{}> => {
+            /**
+             * URL to submit to the FileMaker REST API
+             */
+            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}/containers/${field}/${field_repetition}`;
+
+            // Set Headers and Body
+            self.setHeaders({
+                "Content-type": "multipart/form-data ",
+                Authorization: "Bearer " + self.getToken()
+            });
+            self.setBody(params);
+
+            return new Promise((reject, resolve) => {
+                // Make the API Call
+                request(
+                    {
+                        method: "POST",
+                        url: url,
+                        headers: self.getHeaders(),
+                        agentOptions: self.getSelfSignedCertificate(),
+                        json: true,
+                        body: self.getBody()
+                    },
+                    (error: object, response: object, body: object) => {
+                        if (!error) {
+                            self.setResult(body);
+                            resolve(body);
+                        } else {
+                            reject(error);
+                        }
+                    }
+                );
+            });
         }
     };
 
-    // Declare all the functions available.
+    /* Declare all the functions available. */
     self.getProtocol = Methods.getProtocol;
     self.getIp = Methods.getIp;
     self.getSolution = Methods.getSolution;
@@ -828,6 +878,7 @@ var filemaker = (options: any) => {
     self.getRecord = Methods.getRecord;
     self.find = Methods.find;
     self.setGlobals = Methods.setGlobals;
+    self.uploadToContainer = Methods.uploadToContainer;
 
     return self;
 };

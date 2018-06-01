@@ -1,14 +1,14 @@
 {
-  "name": "filemaker-rest-connector",
-  "version": "1.0.6",
-  "description": "NPM Package to make queries to FileMaker's REST API. Will allow node.js to communicate with the FileMaker Server DATA REST API.",
+  "name": "filemaker-rest-api-connector",
+  "version": "2.0.0",
+  "description": "NPM Package to make queries to FileMaker's REST API. Will allow node.js to communicate with the FileMaker Server DATA REST API. Requires FileMaker 17.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stevenwhitespacesystems/filemaker-rest-connector.git"
+    "url": "git+https://github.com/atroup/filemaker-rest-connector.git"
   },
   "keywords": [
     "FileMaker",
@@ -17,21 +17,24 @@
     "DATA",
     "API"
   ],
-  "author": "Steven McGill <steven@whitespacesystems.co.uk> (http://whitespacesystems.co.uk)",
+  "author": "Connect Solutions <info@connect.solutions> (http://connect.solutions)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stevenwhitespacesystems/filemaker-rest-connector/issues"
+    "url": "https://github.com/atroup/filemaker-rest-connector/issues"
   },
-  "homepage": "https://github.com/stevenwhitespacesystems/filemaker-rest-connector#readme",
+  "homepage": "https://github.com/atroup/filemaker-rest-connector#readme",
   "engines": {
-    "node": ">=7.8.0"
+    "node": ">=8.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "jsdoc": "^3.4.3",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "typescript": "^2.9.1",
+    "@types/node": "^10.1.4"
+
   },
   "dependencies": {
-    "request": "^2.81.0"
+    "request": "^2.87.0"
   }
 }
