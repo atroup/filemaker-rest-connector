@@ -1,7 +1,7 @@
 /**
  * FileMaker-Rest-Connector Module
  * @module filemaker
- * @author Steven McGill <steven@whitespacesystems.co.uk>
+ * @author Connect Solutions <info@connect.solutions>
  * @requires module:request
  *
  */
@@ -45,6 +45,15 @@ var filemaker = (options) => {
     self.token = "";
     self.recordId = "";
     delete self.options;
+    /* helper functions */
+    function setApiScripts(params, url) {
+        if (params) {
+            if (params.hasOwnProperty("preRequestScript")) {
+                url += `script.prerequest=${params.preRequestScript}&script.prerequest.param=${params.preRequestScriptParams}`;
+            }
+        }
+        return url;
+    }
     /**
      * Construct all the functions used in the module
      * @namespace [[{Object}] Methods]
@@ -400,15 +409,11 @@ var filemaker = (options) => {
              * URL to submit to the FileMaker REST API
              */
             var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
+            url = setApiScripts(params, url);
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
-            if (params) {
-                if (params.hasOwnProperty("preRequestScript")) {
-                    url += `script.prerequest=${params.preRequestScript}&script.prerequest.param=${params.preRequestScriptParams}`;
-                }
-            }
             return new Promise((reject, resolve) => {
                 // Make the API Call
                 request({
