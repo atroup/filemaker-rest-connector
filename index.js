@@ -5,14 +5,11 @@
  * @requires module:request
  *
  */
-
 "use strict";
-
 // We require the ability to perform CUSTOM HTTP Requests to the FileMaker Server
 var request = require("request");
-
 // Building of the filemaker object
-var filemaker = (options: any) => {
+var filemaker = options => {
     /**
      * Create the Constructor Object
      * @namespace [[{Object}] Self]
@@ -39,16 +36,15 @@ var filemaker = (options: any) => {
     self.selfSignedCertificate =
         self.options.selfSignedCertificate == true
             ? {
-                  rejectUnauthorized: false
-              }
+                rejectUnauthorized: false
+            }
             : {
-                  rejectUnauthorized: true
-              };
+                rejectUnauthorized: true
+            };
     self.result = {};
     self.token = "";
     self.recordId = "";
     delete self.options;
-
     /**
      * Construct all the functions used in the module
      * @namespace [[{Object}] Methods]
@@ -60,155 +56,125 @@ var filemaker = (options: any) => {
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {String} The protocol to use in the API call.
          */
-
         getProtocol: () => {
             return self.protocol;
         },
-
         /**
          * @function getIp
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {String} The IP to use in the API call.
          */
-
         getIp: () => {
             return self.ip;
         },
-
         /**
          * @function getSolution
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {String} The Solution name to use in the API call.
          */
-
         getSolution: () => {
             return self.solution;
         },
-
         /**
          * @function getHeaders
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {Object} The Headers needed to be passed to the API during a call.
          */
-
         getHeaders: () => {
             return self.headers;
         },
-
         /**
          * @function setHeaders
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @param {Object} headers	Headers to be set
          * @returns {Void}
          */
-
-        setHeaders: (headers: any) => {
+        setHeaders: (headers) => {
             self.headers = headers;
         },
-
         /**
          * @function getBody
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {Object} The Header Body needed to be passed to the API during a call.
          */
-
         getBody: () => {
             return self.body;
         },
-
         /**
          * @function setBody
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @param {Object} body		Body Headers to be set
          * @returns {Void}
          */
-
-        setBody: (body: any) => {
+        setBody: (body) => {
             self.body = body;
         },
-
         /**
          * @function getSelfSignedCertificate
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {Boolean} Use of Self Signed Certificate for SSL. i.e.
          */
-
         getSelfSignedCertificate: () => {
             return self.selfSignedCertificate;
         },
-
         /**
          * @function getResult
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {Boolean} If user is using Self Signed Certficate
          */
-
         getResult: () => {
             return self.result;
         },
-
         /**
          * @function setResult
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @param {Object} result	API Result Object
          * @returns {Void}
          */
-
-        setResult: (result: any) => {
+        setResult: (result) => {
             self.result = result;
         },
-
         /**
          * @function getToken
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {String} API Auth Token
          */
-
         getToken: () => {
             return self.token;
         },
-
         /**
          * @function setToken
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @param {String} token	API Auth Token
          * @returns {Void}
          */
-
-        setToken: (token: any) => {
+        setToken: (token) => {
             self.token = token;
             token = token;
         },
-
         /**
          * @function getRecordId
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @returns {String} Last Internal Record ID used
          */
-
         getRecordId: () => {
             return self.recordId;
         },
-
         /**
          * @function setRecordId
          * @author Steven McGill <steven@whitespacesystems.co.uk>
          * @param {Object} recordId	Last Internal Record ID used.
          * @returns {Void}
          */
-
-        setRecordId: (recordId: any) => {
+        setRecordId: (recordId) => {
             self.recordId = recordId;
         },
-
         /**
          * @function getVersion
          */
-
         getAPIversion: () => {
             return self.APIversion;
         },
-
         /**
          * @function login
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -218,41 +184,36 @@ var filemaker = (options: any) => {
          * @param {Object} body			FileMaker Response Object
          * @todo FileMaker allows for oAuth to occur, this still needs to be implemented.
          */
-
-        login: (): Promise<{}> => {
+        login: () => {
             // TODO: Handle oAuth
             // TODO: Handle oAuth
             // TODO: Handle oAuth
-
             /**
              * URL to submit to the FileMaker REST API
              */
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/sessions`;
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/sessions`;
             return new Promise((resolve, reject) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "POST",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true,
-                        body: self.getBody()
-                    },
-                    (error: any, response: any, body: any) => {
-                        if (!error) {
-                            // TODO: Need to handle any non 202 HTTP response
-                            self.setResult(body);
-                            self.setToken(body.response.token);
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "POST",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true,
+                    body: self.getBody()
+                }, (error, response, body) => {
+                    if (!error) {
+                        // TODO: Need to handle any non 202 HTTP response
+                        self.setResult(body);
+                        self.setToken(body.response.token);
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function logout
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -261,71 +222,60 @@ var filemaker = (options: any) => {
          * @param {Object} error		Error object passed back from request call
          * @param {Object} body			FileMaker Response Object
          */
-
-        logout: (): Promise<{}> => {
+        logout: () => {
             /**
              * URL to submit to the FileMaker REST API
              */
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/sessions/${self.getToken()}`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/sessions/${self.getToken()}`;
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
-
             return new Promise((resolve, reject) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "DELETE",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            self.setToken("");
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "DELETE",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        self.setToken("");
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
-        validToken: (layout: string) => {
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records?_offset=1&_limit=1`;
-
+        validToken: (layout) => {
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records?_offset=1&_limit=1`;
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
-
             return new Promise((reject, resolve) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "GET",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "GET",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function create
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -338,58 +288,51 @@ var filemaker = (options: any) => {
          * @param {Object} body			FileMaker Response Object
          * @returns {Void}
          */
-
-        create: (layout: string, params?: object): Promise<{}> => {
+        create: (layout, params) => {
             /**
              * This will contain the data to be passed to the record creation
              */
-            var body: object = {};
-
+            var body = {};
             /**
              * URL to submit to the FileMaker REST API
              */
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records`;
             if (params === null || params === undefined) {
                 // EMPTY Record being created
                 body = {
                     fieldData: {}
                 };
-            } else {
+            }
+            else {
                 body = params;
             }
-
             // Set Headers and Body
             self.setHeaders({
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + self.getToken()
             });
             self.setBody(body);
-
             return new Promise((resolve, reject) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "POST",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true,
-                        body: self.getBody()
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            self.setRecordId(body.recordId);
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "POST",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true,
+                    body: self.getBody()
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        self.setRecordId(body.recordId);
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function edit
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -402,56 +345,46 @@ var filemaker = (options: any) => {
          * @param {Object} body			FileMaker Response Object
          * @todo Handle the modId optional parameter stated in FileMaker REST API Docs
          */
-
-        edit: (layout: string, recordId: string, params: any) => {
+        edit: (layout, recordId, params) => {
             // TODO: Handle the modId optional parameter
             // TODO: Handle the modId optional parameter
             // TODO: Handle the modId optional parameter
-
             /**
              * This will contain the data to be passed to perform the edit
              */
-
-            var body: object = {};
-
+            var body = {};
             /**
              * URL to submit to the FileMaker REST API
              */
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}`;
             // Set Headers and Body
             body = params;
             self.setHeaders({
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + self.getToken()
             });
-
             self.setBody(body);
-
             return new Promise((reject, resolve) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "PUT",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true,
-                        body: self.getBody()
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            self.setRecordId("");
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "PUT",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true,
+                    body: self.getBody()
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        self.setRecordId("");
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function delete
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -462,53 +395,40 @@ var filemaker = (options: any) => {
          * @param {Object} error		Error object passed back from request call
          * @param {Object} body			FileMaker Response Object
          */
-
-        delete: (
-            layout: string,
-            recordId: string,
-            params: any
-        ): Promise<{}> => {
+        delete: (layout, recordId, params) => {
             /**
              * URL to submit to the FileMaker REST API
              */
-
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
-
             if (params) {
                 if (params.hasOwnProperty("preRequestScript")) {
-                    url += `script.prerequest=${
-                        params.preRequestScript
-                    }&script.prerequest.param=${params.preRequestScriptParams}`;
+                    url += `script.prerequest=${params.preRequestScript}&script.prerequest.param=${params.preRequestScriptParams}`;
                 }
             }
             return new Promise((reject, resolve) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "DELETE",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            self.setRecordId("");
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "DELETE",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        self.setRecordId("");
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function getRecord
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -517,18 +437,11 @@ var filemaker = (options: any) => {
          * @param {Object} params		Portal Object information
          * @param {String} recordId		Internal FileMaker Record Id
          */
-
-        getRecord: (
-            layout: string,
-            params: any,
-            recordId: string
-        ): Promise<{}> => {
+        getRecord: (layout, params, recordId) => {
             /**
              * URL to submit to the FileMaker REST API
              */
-
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/records/${recordId}?`;
             // Portal Settings
             if (params) {
                 if (params.hasOwnProperty("portal")) {
@@ -540,51 +453,46 @@ var filemaker = (options: any) => {
                         if (params.portal[portal].hasOwnProperty("offset")) {
                             url +=
                                 "_offset." +
-                                portal +
-                                "=" +
-                                params.portal[portal].offset +
-                                "&";
+                                    portal +
+                                    "=" +
+                                    params.portal[portal].offset +
+                                    "&";
                         }
                         if (params.portal[portal].hasOwnProperty("limit")) {
                             url +=
                                 "_limit." +
-                                portal +
-                                "=" +
-                                params.portal[portal].limit +
-                                "&";
+                                    portal +
+                                    "=" +
+                                    params.portal[portal].limit +
+                                    "&";
                         }
                     }
                 }
             }
-
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
-
             return new Promise((reject, resolve) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "GET",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            self.setRecordId(body.data[0].recordId);
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "GET",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        self.setRecordId(body.data[0].recordId);
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function getRecords
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -594,17 +502,14 @@ var filemaker = (options: any) => {
          * @param {Object} error		Error object passed back from request call
          * @param {Object} body			FileMaker Response Object
          */
-
-        getRecords: (layout: string, params: any): Promise<{}> => {
+        getRecords: (layout, params) => {
             /**
              * URL to submit to the FileMaker REST API
              */
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}`;
             // Format the Query Parameters into the API URL
             if (params) {
                 url += "/records?";
-
                 if (params.hasOwnProperty("offset")) {
                     url += "_offset=" + params.offset + "&";
                 }
@@ -623,50 +528,45 @@ var filemaker = (options: any) => {
                         if (params.portal[portal].hasOwnProperty("offset")) {
                             url +=
                                 "_offset." +
-                                portal +
-                                "=" +
-                                params.portal[portal].offset +
-                                "&";
+                                    portal +
+                                    "=" +
+                                    params.portal[portal].offset +
+                                    "&";
                         }
                         if (params.portal[portal].hasOwnProperty("limit")) {
                             url +=
                                 "_limit." +
-                                portal +
-                                "=" +
-                                params.portal[portal].limit +
-                                "&";
+                                    portal +
+                                    "=" +
+                                    params.portal[portal].limit +
+                                    "&";
                         }
                     }
                 }
             }
-
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
-
             return new Promise((reject, resolve) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "GET",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "GET",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function find
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -678,20 +578,15 @@ var filemaker = (options: any) => {
          * @param {Object} body			FileMaker Response Object
          * @returns {Void}
          */
-
-        find: (layout: string, params: object): Promise<{}> => {
+        find: (layout, params) => {
             /**
              * URL to submit to the FileMaker REST API
              */
-
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/_find?`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}/_find?`;
             /**
              * This will contain the parameters to be passed to perform the find
              */
-
-            var body: any = {};
-
+            var body = {};
             // Format the Find Parameters into a JSON object to be passed to the API
             if (params) {
                 if (params.hasOwnProperty("query")) {
@@ -723,36 +618,31 @@ var filemaker = (options: any) => {
                     }
                 }
             }
-
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
             self.setBody(body);
-
             return new Promise((resolve, reject) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "POST",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true,
-                        body: self.getBody()
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "POST",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true,
+                    body: self.getBody()
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         },
-
         /**
          * @function setGlobals
          * @author Steven McGill <steven@whitespacesystems.co.uk>
@@ -764,44 +654,37 @@ var filemaker = (options: any) => {
          * @param {Object} body			FileMaker Response Object
          * @returns {Void}
          */
-
-        setGlobals: (layout: string, params: object): Promise<{}> => {
+        setGlobals: (layout, params) => {
             /**
              * URL to submit to the FileMaker REST API
              */
-
-            var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/globals`;
-
+            var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/globals`;
             // Set Headers and Body
             self.setHeaders({
                 Authorization: "Bearer " + self.getToken()
             });
             self.setBody(params);
-
             return new Promise((reject, resolve) => {
                 // Make the API Call
-                request(
-                    {
-                        method: "PUT",
-                        url: url,
-                        headers: self.getHeaders(),
-                        agentOptions: self.getSelfSignedCertificate(),
-                        json: true,
-                        body: self.getBody()
-                    },
-                    (error: object, response: object, body: object) => {
-                        if (!error) {
-                            self.setResult(body);
-                            resolve(body);
-                        } else {
-                            reject(error);
-                        }
+                request({
+                    method: "PUT",
+                    url: url,
+                    headers: self.getHeaders(),
+                    agentOptions: self.getSelfSignedCertificate(),
+                    json: true,
+                    body: self.getBody()
+                }, (error, response, body) => {
+                    if (!error) {
+                        self.setResult(body);
+                        resolve(body);
                     }
-                );
+                    else {
+                        reject(error);
+                    }
+                });
             });
         }
     };
-
     // Declare all the functions available.
     self.getProtocol = Methods.getProtocol;
     self.getIp = Methods.getIp;
@@ -828,9 +711,7 @@ var filemaker = (options: any) => {
     self.getRecord = Methods.getRecord;
     self.find = Methods.find;
     self.setGlobals = Methods.setGlobals;
-
     return self;
 };
-
 /** filemaker object returned */
 module.exports = filemaker;

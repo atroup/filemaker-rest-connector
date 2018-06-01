@@ -2,19 +2,21 @@
 
 ## Synopsis
 
-NPM Package to make queries to FileMaker's REST API. Will allow node.js to communicate with the FileMaker Server DATA REST API.
+NPM Package to make queries to FileMaker's REST API. Will allow node.js to communicate with the FileMaker Server 17 DATA REST API.
 
 ## Code Example
 
 ```
-var FileMaker = require('filemaker');
+var FileMaker = require('filemaker-rest-connector');
 var filemaker = new FileMaker(
     {
 	    "protocol" : "https",
 	    "ip" : "127.0.0.1",
 	    "solution" : "contacts",
-	    "headers" : {"Content-Type" : "application/json"},
-	    "body" : {"user" : "Admin", "password" : "Admin", "layout": layout},
+	    "headers" : {
+                "Content-Type" : "application/json",
+                "Authorization" : "Basic " + Buffer.from("user:password").toString("base64")
+        },
 	    "selfSignedCertificate" : false
 }
 );
@@ -31,20 +33,23 @@ filemaker.login(function(error, result) {
 };)
 ```
 
+(Note how the authentication header should be base64 encoded)
+
 This is an example of how to authenticate to get an Access Token.
-1. Initailse the object with a JSON object.
-2. Test for a request error
-3. Test for a FileMaker error
-4. Handle success response object
+
+1.  Initialise the object with a JSON object.
+2.  Test for a request promise rejection error
+3.  Test for a FileMaker response error
+4.  Handle success response object (promise based)
 
 ## Motivation
 
-With the introduction of REST to the FileMaker server in version 16 and with the world of javascript exloding in the recent years. We decided that it would be prudent to develop an easy helpful wrapper module on npm. That would use FileMakers REST API extremly easy to use.
+With the release of FileMaker 17, the REST API has been updated. Previous versions of this package only worked with version 16, and it was time for an update.
 
 ## Installation
 
 You first need to make sure that **Contacts.fmp12** has been added to **FileMaker Server 16**.
-*FileMaker Server 16 is required as this is the first version of server that implemented the REST API*.
+_FileMaker Server 17 is required_.
 
 ```
 cd ROOT_FOLDER
@@ -66,13 +71,16 @@ This will run all the use test cases already built into the system. If the **Con
 
 ## Contributors
 
-Steven McGill <steven@whitespacesystems.co.uk> (http://whitespacesystems.co.uk)
+Connect Solutions (http://connect.solutions)
+
+Original Author:
+Steven McGill <mailto:steven@whitespacesystems.co.uk> (http://whitespacesystems.co.uk)
 
 ## License
 
 MIT License
 
-Copyright (c) 2017 stevenwhitespacesystems
+Copyright (c) 2018 Connect Solutions
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
