@@ -4,6 +4,8 @@
 
 NPM Package to make queries to FileMaker's REST API. Will allow node.js to communicate with the FileMaker Server 17 DATA REST API.
 
+**Note that this is a forked package, updated to support FileMaker 17's REST API, and it is not backwards compatible with version 16.**
+
 ## Code Example
 
 ```
