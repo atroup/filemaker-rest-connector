@@ -6,6 +6,8 @@
  *
  */
 
+import { ApiLoginResponse, ApiLogoutResponse } from "./interfaces";
+
 "use strict";
 
 // We require the ability to perform CUSTOM HTTP Requests to the FileMaker Server
@@ -101,7 +103,7 @@ var filemaker = (options: any) => {
          * @returns {String} The protocol to use in the API call.
          */
 
-        getProtocol: () => {
+        getProtocol: (): string => {
             return self.protocol;
         },
 
@@ -111,7 +113,7 @@ var filemaker = (options: any) => {
          * @returns {String} The IP to use in the API call.
          */
 
-        getIp: () => {
+        getIp: (): string => {
             return self.ip;
         },
 
@@ -183,7 +185,7 @@ var filemaker = (options: any) => {
          * @returns {Boolean} If user is using Self Signed Certficate
          */
 
-        getResult: () => {
+        getResult: (): any => {
             return self.result;
         },
 
@@ -194,7 +196,7 @@ var filemaker = (options: any) => {
          * @returns {Void}
          */
 
-        setResult: (result: any) => {
+        setResult: (result: any): void => {
             self.result = result;
         },
 
@@ -204,7 +206,7 @@ var filemaker = (options: any) => {
          * @returns {String} API Auth Token
          */
 
-        getToken: () => {
+        getToken: (): string => {
             return self.token;
         },
 
@@ -215,7 +217,7 @@ var filemaker = (options: any) => {
          * @returns {Void}
          */
 
-        setToken: (token: any) => {
+        setToken: (token: string): void => {
             self.token = token;
             token = token;
         },
@@ -226,7 +228,7 @@ var filemaker = (options: any) => {
          * @returns {String} Last Internal Record ID used
          */
 
-        getRecordId: () => {
+        getRecordId: (): string => {
             return self.recordId;
         },
 
@@ -237,7 +239,7 @@ var filemaker = (options: any) => {
          * @returns {Void}
          */
 
-        setRecordId: (recordId: any) => {
+        setRecordId: (recordId: any): void => {
             self.recordId = recordId;
         },
 
@@ -245,7 +247,7 @@ var filemaker = (options: any) => {
          * @function getVersion
          */
 
-        getAPIversion: () => {
+        getAPIversion: (): string => {
             return self.APIversion;
         },
 
@@ -259,11 +261,7 @@ var filemaker = (options: any) => {
          * @todo FileMaker allows for oAuth to occur, this still needs to be implemented.
          */
 
-        login: (): Promise<{}> => {
-            // TODO: Handle oAuth
-            // TODO: Handle oAuth
-            // TODO: Handle oAuth
-
+        login: (): Promise<{ body: ApiLoginResponse }> => {
             /**
              * URL to submit to the FileMaker REST API
              */
@@ -282,8 +280,10 @@ var filemaker = (options: any) => {
                     (error: any, response: any, body: any) => {
                         if (!error) {
                             // TODO: Need to handle any non 202 HTTP response
-                            self.setResult(body);
-                            self.setToken(body.response.token);
+                            if (response.status === 202) {
+                                self.setResult(body);
+                                self.setToken(body.response.token);
+                            }
                             resolve(body);
                         } else {
                             reject(error);
@@ -302,7 +302,7 @@ var filemaker = (options: any) => {
          * @param {Object} body			FileMaker Response Object
          */
 
-        logout: (): Promise<{}> => {
+        logout: (): Promise<{ body: ApiLogoutResponse }> => {
             /**
              * URL to submit to the FileMaker REST API
              */
@@ -310,7 +310,7 @@ var filemaker = (options: any) => {
 
             // Set Headers and Body
             self.setHeaders({
-                Authorization: "Bearer " + self.getToken()
+                "Content-Type": "application/json"
             });
 
             return new Promise((resolve, reject) => {
@@ -323,11 +323,15 @@ var filemaker = (options: any) => {
                         agentOptions: self.getSelfSignedCertificate(),
                         json: true
                     },
-                    (error: object, response: object, body: object) => {
+                    (error: object, response: any, body: any) => {
                         if (!error) {
-                            self.setResult(body);
-                            self.setToken("");
-                            resolve(body);
+                            if (response.messages[0].code === "0") {
+                                self.setResult(body);
+                                self.setToken("");
+                                resolve(body);
+                            } else {
+                                reject("Logout failed: " + response.messages);
+                            }
                         } else {
                             reject(error);
                         }
@@ -374,10 +378,6 @@ var filemaker = (options: any) => {
          * @param {String} layout		Layout name to use.
          * @param {Object} params		Parameters to be used, in this case, data you wish to set the record with.
          * 								Leave empty for a BLANK record.
-         * @callback callback
-         * @param {Object} error		Error object passed back from request call
-         * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          */
 
         create: (layout: string, params?: object): Promise<{}> => {
@@ -441,17 +441,10 @@ var filemaker = (options: any) => {
          * @param {String} layout		Layout name to use.
          * @param {String} recordId		Internal FileMaker Record Id
          * @param {Object} params		Parameters to be used, in this case, data you wish to set the record with.
-         * @callback callback
-         * @param {Object} error		Error object passed back from request call
-         * @param {Object} body			FileMaker Response Object
          * @todo Handle the modId optional parameter stated in FileMaker REST API Docs
          */
 
         edit: (layout: string, recordId: string, params: any) => {
-            // TODO: Handle the modId optional parameter
-            // TODO: Handle the modId optional parameter
-            // TODO: Handle the modId optional parameter
-
             /**
              * This will contain the data to be passed to perform the edit
              */
@@ -716,10 +709,6 @@ var filemaker = (options: any) => {
          * @description Will return an object with the records from the find data
          * @param {String} layout		Layout name to use.
          * @param {Object} params		Find Parameters
-         * @callback callback
-         * @param {Object} error		Error object passed back from request call
-         * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          */
 
         find: (layout: string, params: object): Promise<{}> => {

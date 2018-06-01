@@ -22,17 +22,13 @@ var filemaker = new FileMaker(
 	    "selfSignedCertificate" : false
 }
 );
-filemaker.login(function(error, result) {
-    if(error) {
-        // Handle error
-    } else {
-        if(result.errorCode ==! '0') {
-            // Handle FileMaker Error
-        } else {
-            // Success
-        }
-    }
-};)
+
+// these methods are promise based
+
+let login_response = await filemaker.login().catch(error => {
+    console.log(error)
+})
+// response undefined if promise was rejected
 ```
 
 (Note how the authentication header should be base64 encoded)
@@ -69,7 +65,7 @@ cd ROOT/node_modules/filemaker-rest-connector
 npm test
 ```
 
-This will run all the use test cases already built into the system. If the **Contacts.fmp12** file is configured properly on your FileMaker Server 16 server, all tests should pass.
+This will run all the use test cases already built into the system. If the **Contacts.fmp12** file is configured properly on your FileMaker Server 17 server, all tests should pass.
 
 ## Contributors
 

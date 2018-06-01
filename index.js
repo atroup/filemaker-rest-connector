@@ -1,11 +1,5 @@
-/**
- * FileMaker-Rest-Connector Module
- * @module filemaker
- * @author Connect Solutions <info@connect.solutions>
- * @requires module:request
- *
- */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // We require the ability to perform CUSTOM HTTP Requests to the FileMaker Server
 const request = require("request");
 // Building of the filemaker object
@@ -217,9 +211,6 @@ var filemaker = (options) => {
          * @todo FileMaker allows for oAuth to occur, this still needs to be implemented.
          */
         login: () => {
-            // TODO: Handle oAuth
-            // TODO: Handle oAuth
-            // TODO: Handle oAuth
             /**
              * URL to submit to the FileMaker REST API
              */
@@ -236,8 +227,10 @@ var filemaker = (options) => {
                 }, (error, response, body) => {
                     if (!error) {
                         // TODO: Need to handle any non 202 HTTP response
-                        self.setResult(body);
-                        self.setToken(body.response.token);
+                        if (response.status === 202) {
+                            self.setResult(body);
+                            self.setToken(body.response.token);
+                        }
                         resolve(body);
                     }
                     else {
@@ -261,7 +254,7 @@ var filemaker = (options) => {
             var url = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/sessions/${self.getToken()}`;
             // Set Headers and Body
             self.setHeaders({
-                Authorization: "Bearer " + self.getToken()
+                "Content-Type": "application/json"
             });
             return new Promise((resolve, reject) => {
                 // Make the API Call
@@ -273,9 +266,14 @@ var filemaker = (options) => {
                     json: true
                 }, (error, response, body) => {
                     if (!error) {
-                        self.setResult(body);
-                        self.setToken("");
-                        resolve(body);
+                        if (response.messages[0].code === "0") {
+                            self.setResult(body);
+                            self.setToken("");
+                            resolve(body);
+                        }
+                        else {
+                            reject("Logout failed: " + response.messages);
+                        }
                     }
                     else {
                         reject(error);
@@ -316,10 +314,6 @@ var filemaker = (options) => {
          * @param {String} layout		Layout name to use.
          * @param {Object} params		Parameters to be used, in this case, data you wish to set the record with.
          * 								Leave empty for a BLANK record.
-         * @callback callback
-         * @param {Object} error		Error object passed back from request call
-         * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          */
         create: (layout, params) => {
             /**
@@ -375,15 +369,9 @@ var filemaker = (options) => {
          * @param {String} layout		Layout name to use.
          * @param {String} recordId		Internal FileMaker Record Id
          * @param {Object} params		Parameters to be used, in this case, data you wish to set the record with.
-         * @callback callback
-         * @param {Object} error		Error object passed back from request call
-         * @param {Object} body			FileMaker Response Object
          * @todo Handle the modId optional parameter stated in FileMaker REST API Docs
          */
         edit: (layout, recordId, params) => {
-            // TODO: Handle the modId optional parameter
-            // TODO: Handle the modId optional parameter
-            // TODO: Handle the modId optional parameter
             /**
              * This will contain the data to be passed to perform the edit
              */
@@ -608,10 +596,6 @@ var filemaker = (options) => {
          * @description Will return an object with the records from the find data
          * @param {String} layout		Layout name to use.
          * @param {Object} params		Find Parameters
-         * @callback callback
-         * @param {Object} error		Error object passed back from request call
-         * @param {Object} body			FileMaker Response Object
-         * @returns {Void}
          */
         find: (layout, params) => {
             /**
