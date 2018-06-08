@@ -55,19 +55,19 @@ var filemaker = (options: any) => {
     function setApiScriptsURL(params: any, url: string) {
         if (params) {
             if (params.hasOwnProperty("preRequestScript")) {
-                url += `&script.prerequest=${
+                url += `script.prerequest=${
                     params.preRequestScript
-                }&script.prerequest.param=${params.preRequestScriptParams}`;
+                }&script.prerequest.param=${params.preRequestScriptParams}&`;
             }
             if (params.hasOwnProperty("script")) {
-                url += `&script=${params.script}&script.param=${
+                url += `script=${params.script}&script.param=${
                     params.scriptParams
-                }`;
+                }&`;
             }
             if (params.hasOwnProperty("preSortScript")) {
-                url += `&script.presort=${
+                url += `script.presort=${
                     params.preSortScript
-                }&script.presort.param=${params.preSortScriptParams}`;
+                }&script.presort.param=${params.preSortScriptParams}&`;
             }
         }
         return url;
@@ -325,13 +325,9 @@ var filemaker = (options: any) => {
                     },
                     (error: object, response: any, body: any) => {
                         if (!error) {
-                            if (response.messages[0].code === "0") {
-                                self.setResult(body);
-                                self.setToken("");
-                                resolve(body);
-                            } else {
-                                reject("Logout failed: " + response.messages);
-                            }
+                            self.setResult(body);
+                            self.setToken("");
+                            resolve(body);
                         } else {
                             reject(error);
                         }
@@ -635,12 +631,13 @@ var filemaker = (options: any) => {
              * URL to submit to the FileMaker REST API
              */
             var url: string = `${self.getProtocol()}://${self.getIp()}/fmi/data/${self.getAPIversion()}/databases/${self.getSolution()}/layouts/${layout}`;
-            url = setApiScriptsURL(params, url);
 
             // Format the Query Parameters into the API URL
             if (params) {
                 url += "/records?";
+                url = setApiScriptsURL(params, url);
 
+                console.log(url);
                 if (params.hasOwnProperty("offset")) {
                     url += "_offset=" + params.offset + "&";
                 }
