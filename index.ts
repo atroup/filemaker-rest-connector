@@ -691,7 +691,11 @@ var filemaker = (options: any) => {
                         body: self.getBody()
                     },
                     (error: object, response: object, body: object) => {
-                        resolve(body.response);
+                        if (!error) {
+                            resolve(body.response);
+                        } else {
+                            reject(error);
+                        }
                     }
                 );
             });

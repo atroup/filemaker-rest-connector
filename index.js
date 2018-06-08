@@ -578,7 +578,12 @@ var filemaker = (options) => {
                     json: true,
                     body: self.getBody()
                 }, (error, response, body) => {
-                    resolve(body.response);
+                    if (!error) {
+                        resolve(body.response);
+                    }
+                    else {
+                        reject(error);
+                    }
                 });
             });
         },
